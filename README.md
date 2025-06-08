@@ -1,4 +1,4 @@
 # lambda-alb-backend
 
 Instruction:
-- Modify the index.html with the respective values.
+- Edit `index.html` and `s3_bucket` value in `lambda_function.py` file with appropriate value.
