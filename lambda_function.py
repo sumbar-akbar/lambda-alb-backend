@@ -2,7 +2,12 @@ import boto3
 import botocore
 
 def lambda_handler(event, context):
-    client = boto3.client('s3')
+    # Explicitly specify endpoint URL and region
+    client = boto3.client(
+        's3',
+        endpoint_url='https://s3.<region>.amazonaws.com',
+        region_name='<region>'
+    )
 
     html = get_object(client)
 
@@ -19,10 +24,14 @@ def lambda_handler(event, context):
     return response
 
 def get_object(client):
-    response = client.get_object(
-        Bucket='<s3_bucket>',
-        Key='index.html'
-    )
-
-    body = response['Body'].read()
-    return body
+    try:
+        response = client.get_object(
+            Bucket='<s3_bucket>',
+            Key='index.html'
+        )
+        body = response['Body'].read().decode('utf-8')
+        return body
+    except botocore.exceptions.ClientError as e:
+        return f"Error fetching object: {e.response['Error']['Message']}"
+    except Exception as e:
+        return f"Unhandled error: {str(e)}"
